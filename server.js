@@ -28,11 +28,11 @@ password: process.env.ADMIN_PASSWORD || ‘admin123’
 
 // Routes
 app.get(’/’, (req, res) => {
-res.sendFile(path.join(__dirname, ‘index.html’));
+res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get(’/admin’, (req, res) => {
-res.sendFile(path.join(__dirname, ‘admin.html’));
+res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 // Customer API - Validate gift card
