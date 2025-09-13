@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Card Validator - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10vh;
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: none;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .logout-btn, .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover, .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn, .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover, .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled, .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cards-section {
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-header h3 {
+            margin: 0;
+        }
+
+        .refresh-btn {
+            width: auto;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .price-management {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .price-form {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .price-form .form-group {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .price-form .btn {
+            width: auto;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .current-price {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cards-table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+            background: white;
+            margin: 0;
+        }
+
+        .cards-table th,
+        .cards-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .cards-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cards-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .cards-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-select, .price-input {
+            padding: 0.5rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .status-select:focus, .price-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-accepted {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-declined {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .admin-info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        code {
+            background: #f1f3f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .timestamp {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .price-cell {
+            min-width: 120px;
+        }
+
+        .status-cell {
+            min-width: 100px;
+        }
+
+        .code-cell {
+            min-width: 150px;
+        }
+
+        .date-cell {
+            min-width: 140px;
+        }
+
+        .action-cell {
+            min-width: 120px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .login-container {
+                margin-top: 5vh;
+            }
+
+            .cards-table {
+                font-size: 0.85rem;
+            }
+
+            .cards-table th,
+            .cards-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .price-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .price-form .form-group {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-table th,
+            .cards-table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .cards-table {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginContainer" class="login-container">
+            <h2>🔐 Admin Login</h2>
+            <p style="margin-bottom: 2rem; color: #666;">Enter your credentials to access the admin panel</p>
+
+            <div class="admin-info">
+                <strong>Demo Credentials:</strong><br>
+                Username: admin<br>
+                Password: admin123
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Login
+                </button>
+            </form>
+
+            <div id="loginError" class="error" style="display: none;"></div>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Gift Card Validator</a>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="admin-header">
+                <h1>🎛️ Admin Dashboard</h1>
+                <div class="header-actions">
+                    <a href="index.html" class="back-btn">🏠 Customer Panel</a>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+
+            <div class="cards-section">
+                <!-- Price Management Section -->
+                <div class="section-header">
+                    <h3>💰 Price Management</h3>
+                </div>
+
+                <div class="price-management">
+                    <div class="price-form">
+                        <div class="form-group">
+                            <label for="priceAmount">Price Amount</label>
+                            <input type="number" id="priceAmount" placeholder="25.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="priceCurrency">Currency</label>
+                            <select id="priceCurrency">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="CAD">CAD (C$)</option>
+                                <option value="AUD">AUD (A$)</option>
+                                <option value="JPY">JPY (¥)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn" id="updatePriceBtn">Update Price</button>
+                    </div>
+
+                    <div class="current-price" id="currentPriceDisplay">
+                        <strong>Current Gift Card Price:</strong> <span id="currentPriceValue">Not set</span>
+                    </div>
+
+                    <div id="priceMessage" style="display: none; margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Gift Card Management Section -->
+                <div class="section-header">
+                    <h3>🎫 Gift Card Management</h3>
+                    <button class="btn refresh-btn" id="refreshBtn">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCards">0</div>
+                        <div class="stat-label">Total Cards</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="acceptedCards">0</div>
+                        <div class="stat-label">Accepted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="declinedCards">0</div>
+                        <div class="stat-label">Declined</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingCards">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+
+                <div id="cardsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No gift cards submitted yet</p>
+                        <small>Cards will appear here when customers validate them</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Shared storage keys
+        const STORAGE_KEY = 'giftCardValidator';
+        const PRICE_STORAGE_KEY = 'giftCardPrice';
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123';
+
+        // Currency symbols mapping
+        const CURRENCY_SYMBOLS = {
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'CAD': 'C$',
+            'AUD': 'A$',
+            'JPY': '¥'
+        };
+
+        // Get all cards
+        function getCards() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            } catch (error) {
+                console.error('Error parsing cards from localStorage:', error);
+                return {};
+            }
+        }
+
+        // Save cards
+        function saveCards(cards) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+            } catch (error) {
+                console.error('Error saving cards to localStorage:', error);
+            }
+        }
+
+        // Get current price
+        function getCurrentPrice() {
+            try {
+                return JSON.parse(localStorage.getItem(PRICE_STORAGE_KEY)) || null;
+            } catch (error) {
+                console.error('Error parsing price from localStorage:', error);
+                return null;
+            }
+        }
+
+        // Save price
+        function savePrice(priceData) {
+            try {
+                localStorage.setItem(PRICE_STORAGE_KEY, JSON.stringify(priceData));
+            } catch (error) {
+                console.error('Error saving price to localStorage:', error);
+            }
+        }
+
+        // DOM elements
+        const loginContainer = document.getElementById('loginContainer');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const updatePriceBtn = document.getElementById('updatePriceBtn');
+        const priceMessage = document.getElementById('priceMessage');
+
+        // Login form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const loginBtn = document.getElementById('loginBtn');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showLoginError('❌ Please enter both username and password');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading"></span> Logging in...';
+
+            setTimeout(() => {
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    loginContainer.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loginError.style.display = 'none';
+                    loadCards();
+                    loadCurrentPrice();
+                } else {
+                    showLoginError('❌ Invalid username or password');
+                }
+                
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Login';
+            }, 800);
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', function() {
+            adminPanel.style.display = 'none';
+            loginContainer.style.display = 'block';
+            loginForm.reset();
+            loginError.style.display = 'none';
+        });
+
+        // Refresh cards
+        refreshBtn.addEventListener('click', loadCards);
+
+        // Update price
+        updatePriceBtn.addEventListener('click', function() {
+            const amount = parseFloat(document.getElementById('priceAmount').value);
+            const currency = document.getElementById('priceCurrency').value;
+
+            if (isNaN(amount) || amount < 0) {
+                showPriceMessage('❌ Please enter a valid price amount', 'error');
+                return;
+            }
+
+            const priceData = {
+                amount: amount,
+                currency: currency,
+                updatedAt: new Date().toISOString()
+            };
+
+            savePrice(priceData);
+            loadCurrentPrice();
+            showPriceMessage('✅ Price updated successfully!', 'success');
+
+            // Clear the form
+            document.getElementById('priceAmount').value = '';
+            document.getElementById('priceCurrency').value = 'USD';
+        });
+
+        // Load current price
+        function loadCurrentPrice() {
+            const priceData = getCurrentPrice();
+            const currentPriceValue = document.getElementById('currentPriceValue');
+            
+            if (priceData && priceData.amount !== undefined) {
+                const symbol = CURRENCY_SYMBOLS[priceData.currency] || priceData.currency;
+                currentPriceValue.textContent = `${symbol}${priceData.amount.toFixed(2)} ${priceData.currency}`;
+            } else {
+                currentPriceValue.textContent = 'Not set';
+            }
+        }
+
+        // Load cards from storage
+        function loadCards() {
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span class="loading"></span> Loading...';
+            refreshBtn.disabled = true;
+
+            setTimeout(() => {
+                try {
+                    const cards = getCards();
+                    const cardList = Object.values(cards);
+                    
+                    updateStats(cardList);
+                    displayCards(cardList);
+                } catch (error) {
+                    console.error('Error loading cards:', error);
+                    showError('Error loading cards. Please try again.');
+                }
+                
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.disabled = false;
+            }, 500);
+        }
+
+        // Update statistics
+        function updateStats(cards) {
+            const total = cards.length;
+            const accepted = cards.filter(card => card.status === 'accepted').length;
+            const declined = cards.filter(card => card.status === 'declined').length;
+            const pending = cards.filter(card => card.status === 'pending').length;
+
+            document.getElementById('totalCards').textContent = total;
+            document.getElementById('acceptedCards').textContent = accepted;
+            document.getElementById('declinedCards').textContent = declined;
+            document.getElementById('pendingCards').textContent = pending;
+        }
+
+        // Display cards in table
+        function displayCards(cards) {
+            if (cards.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No gift cards submitted yet</p>
+                        <small>Cards will appear here when customers validate them</small>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort cards by creation date (newest first)
+            cards.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="cards-table">
+                        <thead>
+                            <tr>
+                                <th class="code-cell">Gift Card Code</th>
+                                <th class="status-cell">Current Status</th>
+                                <th class="price-cell">Price</th>
+                                <th class="date-cell">Created</th>
+                                <th class="date-cell">Last Updated</th>
+                                <th class="action-cell">Change Status</th>
+                                <th class="price-cell">Set Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cards.map(card => `
+                                <tr>
+                                    <td class="code-cell"><code>${escapeHtml(card.code)}</code></td>
+                                    <td class="status-cell">
+                                        <span class="status-badge status-${card.status}">
+                                            ${getStatusIcon(card.status)} ${card.status.toUpperCase()}
+                                        </span>
+                                    </td>
+                                    <td class="price-cell">
+                                        ${card.price ? formatPrice(card.price.amount, card.price.currency) : 'Not set'}
+                                    </td>
+                                    <td class="date-cell">
+                                        <div class="timestamp">${formatDate(card.createdAt)}</div>
+                                    </td>
+                                    <td class="date-cell">
+                                        <div class="timestamp">${card.updatedAt ? formatDate(card.updatedAt) : 'Never'}</div>
+                                    </td>
+                                    <td class="action-cell">
+                                        <select class="status-select" onchange="updateCardStatus('${escapeHtml(card.code)}', this.value)">
+                                            <option value="pending" ${card.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                            <option value="accepted" ${card.status === 'accepted' ? 'selected' : ''}>✅ Accepted</option>
+                                            <option value="declined" ${card.status === 'declined' ? 'selected' : ''}>❌ Declined</option>
+                                        </select>
+                                    </td>
+                                    <td class="price-cell">
+                                        <input type="number" class="price-input" placeholder="25.00" step="0.01" min="0" 
+                                               value="${card.price ? card.price.amount : ''}"
+                                               onchange="updateCardPrice('${escapeHtml(card.code)}', this.value)">
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            cardsContainer.innerHTML = tableHTML;
+        }
+
+        // Update card status
+        function updateCardStatus(code, status) {
+            try {
+                const cards = getCards();
+                if (cards[code]) {
+                    cards[code].status = status;
+                    cards[code].updatedAt = new Date().toISOString();
+                    saveCards(cards);
+                    loadCards(); // Refresh the table and stats
+                }
+            } catch (error) {
+                console.error('Error updating card status:', error);
+                showError('Error updating card status. Please try again.');
+            }
+        }
+
+        // Update card price
+        function updateCardPrice(code, amount) {
+            try {
+                const cards = getCards();
+                if (cards[code]) {
+                    const priceAmount = parseFloat(amount);
+                    if (isNaN(priceAmount) || priceAmount < 0) {
+                        return;
+                    }
+                    
+                    // Use global price currency or default to USD
+                    const globalPrice = getCurrentPrice();
+                    const currency = globalPrice ? globalPrice.currency : 'USD';
+                    
+                    cards[code].price = {
+                        amount: priceAmount,
+                        currency: currency
+                    };
+                    cards[code].updatedAt = new Date().toISOString();
+                    saveCards(cards);
+                    loadCards(); // Refresh the table
+                }
+            } catch (error) {
+                console.error('Error updating card price:', error);
+                showError('Error updating card price. Please try again.');
+            }
+        }
+
+        // Helper functions
+        function showLoginError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+        }
+
+        function showPriceMessage(message, type) {
+            priceMessage.textContent = message;
+            priceMessage.className = type;
+            priceMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                priceMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            // You could implement a global error display here
+            console.error(message);
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                'accepted': '✅',
+                'declined': '❌',
+                'pending': '⏳'
+            };
+            return icons[status] || '';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Never';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Invalid Date';
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } catch (error) {
+                return 'Invalid Date';
+            }
+        }
+
+        function formatPrice(amount, currency) {
+            if (amount === undefined || amount === null || isNaN(amount)) return 'Not set';
+            const symbol = CURRENCY_SYMBOLS[currency] || currency;
+            return `${symbol}${parseFloat(amount).toFixed(2)}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Make functions globally available for inline event handlers
+        window.updateCardStatus = updateCardStatus;
+        window.updateCardPrice = updateCardPrice;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentPrice();
+        });
+    </script>
+</body>
+</html>
