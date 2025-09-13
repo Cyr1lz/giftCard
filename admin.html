@@ -54,6 +54,25 @@
             font-size: 1.8rem;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
         .logout-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -80,7 +99,7 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 1rem;
             border: 2px solid #e1e5e9;
@@ -89,7 +108,7 @@
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -113,16 +132,12 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .cards-section {
-            padding: 2rem;
-            position: relative;
+        .btn.danger {
+            background: #dc3545;
         }
 
-        .cards-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+        .btn.danger:hover {
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
         }
 
         .refresh-btn {
@@ -131,64 +146,117 @@
             font-size: 0.9rem;
         }
 
-        .cards-container {
+        .section-header {
             display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            padding-bottom: 1rem;
-            gap: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: #667eea #f8f9fa;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1rem;
         }
 
-        .cards-container::-webkit-scrollbar {
-            height: 8px;
+        .section-header h3 {
+            color: #333;
+            font-size: 1.3rem;
         }
 
-        .cards-container::-webkit-scrollbar-track {
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-
-        .cards-container::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-
-        .gift-card {
-            flex: 0 0 auto;
-            width: 250px;
-            background: #fff;
-            border: 1px solid #e1e5e9;
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .price-management {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 1rem;
+            max-width: 300px;
+            margin-bottom: 2rem;
         }
 
-        .gift-card code {
-            word-break: break-all;
+        .current-price {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
             font-size: 0.9rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .cards-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .cards-table th,
+        .cards-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .cards-table th {
+            background: #f8f9fa;
+            font-weight: 600;
             color: #333;
         }
 
-        .gift-card .value, .gift-card .balance {
+        .code-cell code {
+            word-break: break-all;
             font-size: 0.9rem;
+            color: #333;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .timestamp {
+            font-size: 0.85rem;
             color: #666;
         }
 
-        .gift-card .status-select {
+        .price-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .status-select {
             padding: 0.5rem;
             border: 2px solid #e1e5e9;
             border-radius: 6px;
             background-color: white;
             cursor: pointer;
             font-size: 0.9rem;
+            width: 100%;
         }
 
-        .gift-card .status-select:focus {
+        .status-select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -216,57 +284,28 @@
             color: #856404;
         }
 
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s;
-        }
-
-        .nav-arrow:hover {
-            background: #764ba2;
-        }
-
-        .nav-arrow.left {
-            left: 10px;
-        }
-
-        .nav-arrow.right {
-            right: 10px;
-        }
-
-        .nav-arrow:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-            width: 100%;
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .admin-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-align: left;
         }
 
         .error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
@@ -302,25 +341,39 @@
             to { transform: rotate(360deg); }
         }
 
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            width: 100%;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
-            }
-
-            .gift-card {
-                width: 200px;
-            }
-
-            .nav-arrow {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
             }
 
             .admin-header {
                 flex-direction: column;
                 gap: 1rem;
                 text-align: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .cards-table th,
+            .cards-table td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -378,31 +431,29 @@
                 </div>
 
                 <div class="price-management">
-                    <div class="price-form">
-                        <div class="form-group">
-                            <label for="priceAmount">Price Amount</label>
-                            <input type="number" id="priceAmount" placeholder="25.00" step="0.01" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="priceCurrency">Currency</label>
-                            <select id="priceCurrency">
-                                <option value="USD">USD ($)</option>
-                                <option value="EUR">EUR (€)</option>
-                                <option value="GBP">GBP (£)</option>
-                                <option value="CAD">CAD (C$)</option>
-                                <option value="AUD">AUD (A$)</option>
-                                <option value="JPY">JPY (¥)</option>
-                            </select>
-                        </div>
-                        <button type="button" class="btn" id="updatePriceBtn">Update Price</button>
+                    <div class="form-group">
+                        <label for="priceAmount">Price Amount</label>
+                        <input type="number" id="priceAmount" placeholder="25.00" step="0.01" min="0">
                     </div>
-
-                    <div class="current-price" id="currentPriceDisplay">
-                        <strong>Current Gift Card Price:</strong> <span id="currentPriceValue">Not set</span>
+                    <div class="form-group">
+                        <label for="priceCurrency">Currency</label>
+                        <select id="priceCurrency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="CAD">CAD (C$)</option>
+                            <option value="AUD">AUD (A$)</option>
+                            <option value="JPY">JPY (¥)</option>
+                        </select>
                     </div>
-
-                    <div id="priceMessage" style="display: none; margin-top: 1rem;"></div>
+                    <button type="button" class="btn" id="updatePriceBtn">Update Price</button>
                 </div>
+
+                <div class="current-price" id="currentPriceDisplay">
+                    <strong>Current Gift Card Price:</strong> <span id="currentPriceValue">Not set</span>
+                </div>
+
+                <div id="priceMessage" style="display: none; margin-top: 1rem;"></div>
 
                 <!-- Gift Card Management Section -->
                 <div class="section-header">
@@ -479,7 +530,7 @@
             const password = document.getElementById('password').value;
 
             if (!username || !password) {
-                showLoginError('❌ Please enter both username and password');
+                showLoginError('Please enter both username and password');
                 return;
             }
 
@@ -487,7 +538,7 @@
             loginBtn.innerHTML = '<span class="loading"></span> Logging in...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                const response = await fetch(${API_BASE}/api/admin/login, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password }),
@@ -503,11 +554,11 @@
                     loadCards();
                     loadCurrentPrice();
                 } else {
-                    showLoginError('❌ Invalid username or password');
+                    showLoginError('Invalid username or password');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                showLoginError('❌ Network error. Please check if the server is running.');
+                showLoginError('Network error. Please check if the server is running.');
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = 'Login';
@@ -517,7 +568,7 @@
         // Logout
         logoutBtn.addEventListener('click', async function() {
             try {
-                await fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', credentials: 'include' });
+                await fetch(${API_BASE}/api/admin/logout, { method: 'POST', credentials: 'include' });
             } catch (error) {
                 console.error('Logout error:', error);
             }
@@ -533,16 +584,17 @@
 
         // Update price
         updatePriceBtn.addEventListener('click', async function() {
-            const amount = parseFloat(document.getElementById('priceAmount').value);
+            const amountStr = document.getElementById('priceAmount').value.trim();
+            const amount = parseFloat(amountStr);
             const currency = document.getElementById('priceCurrency').value;
 
-            if (isNaN(amount) || amount < 0) {
-                showPriceMessage('❌ Please enter a valid price amount', 'error');
+            if (!amountStr || isNaN(amount) || amount < 0) {
+                showPriceMessage('Please enter a valid price amount', 'error');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/price`, {
+                const response = await fetch(${API_BASE}/api/admin/price, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ amount, currency }),
@@ -552,34 +604,35 @@
 
                 if (response.ok) {
                     loadCurrentPrice();
-                    showPriceMessage('✅ Price updated successfully!', 'success');
+                    showPriceMessage('Price updated successfully!', 'success');
                     document.getElementById('priceAmount').value = '';
                     document.getElementById('priceCurrency').value = 'USD';
                 } else {
-                    showPriceMessage(`❌ ${data.error}`, 'error');
+                    showPriceMessage(${data.error}, 'error');
                 }
             } catch (error) {
                 console.error('Update price error:', error);
-                showPriceMessage('❌ Network error. Please try again.', 'error');
+                showPriceMessage('Network error. Please try again.', 'error');
             }
         });
 
         // Load current price
         async function loadCurrentPrice() {
+            const currentPriceValue = document.getElementById('currentPriceValue');
+            if (!currentPriceValue) return;
             try {
-                const response = await fetch(`${API_BASE}/api/admin/price`, { credentials: 'include' });
+                const response = await fetch(${API_BASE}/api/admin/price, { credentials: 'include' });
                 const priceData = await response.json();
-                const currentPriceValue = document.getElementById('currentPriceValue');
                 
                 if (priceData.amount !== null) {
                     const symbol = CURRENCY_SYMBOLS[priceData.currency] || priceData.currency;
-                    currentPriceValue.textContent = `${symbol}${priceData.amount.toFixed(2)} ${priceData.currency}`;
+                    currentPriceValue.textContent = ${symbol}${priceData.amount.toFixed(2)} ${priceData.currency};
                 } else {
                     currentPriceValue.textContent = 'Not set';
                 }
             } catch (error) {
                 console.error('Error loading price:', error);
-                document.getElementById('currentPriceValue').textContent = 'Error loading';
+                currentPriceValue.textContent = 'Error loading';
             }
         }
 
@@ -592,7 +645,7 @@
             refreshBtn.disabled = true;
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/cards`, { credentials: 'include' });
+                const response = await fetch(${API_BASE}/api/admin/cards, { credentials: 'include' });
                 const data = await response.json();
 
                 if (response.ok) {
@@ -624,36 +677,14 @@
         // Display cards in table
         function displayCards(cards) {
             if (cards.length === 0) {
-                cardsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📦</div>
-                        <p>No gift cards submitted yet</p>
-                        <small>Cards will appear here when customers validate them</small>
-                    </div>
-                `;
+                cardsContainer.innerHTML =                     <div class="empty-state">                         <div class="empty-state-icon">📦</div>                         <p>No gift cards submitted yet</p>                         <small>Cards will appear here when customers validate them</small>                     </div>                ;
                 return;
             }
 
             // Sort cards by creation date (newest first)
             cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            const tableHTML = `
-                <div class="table-container">
-                    <table class="cards-table">
-                        <thead>
-                            <tr>
-                                <th class="code-cell">Gift Card Code</th>
-                                <th class="status-cell">Current Status</th>
-                                <th class="price-cell">Price</th>
-                                <th class="date-cell">Created</th>
-                                <th class="date-cell">Last Updated</th>
-                                <th class="action-cell">Change Status</th>
-                                <th class="price-cell">Set Price</th>
-                                <th class="action-cell">Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${cards.map(card => `
+            const tableHTML =                 <div class="table-container">                     <table class="cards-table">                         <thead>                             <tr>                                 <th class="code-cell">Gift Card Code</th>                                 <th class="status-cell">Current Status</th>                                 <th class="price-cell">Price</th>                                 <th class="date-cell">Created</th>                                 <th class="date-cell">Last Updated</th>                                 <th class="action-cell">Change Status</th>                                 <th class="price-cell">Set Price</th>                                 <th class="action-cell">Delete</th>                             </tr>                         </thead>                         <tbody>                             ${cards.map(card =>
                                 <tr>
                                     <td class="code-cell"><code>${escapeHtml(card.code)}</code></td>
                                     <td class="status-cell">
@@ -672,9 +703,9 @@
                                     </td>
                                     <td class="action-cell">
                                         <select class="status-select" onchange="updateCardStatus('${escapeHtml(card.code)}', this.value)">
-                                            <option value="pending" ${card.status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
-                                            <option value="accepted" ${card.status === 'accepted' ? 'selected' : ''}>✅ Accepted</option>
-                                            <option value="declined" ${card.status === 'declined' ? 'selected' : ''}>❌ Declined</option>
+                                            <option value="pending" ${card.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                            <option value="accepted" ${card.status === 'accepted' ? 'selected' : ''}>Accepted</option>
+                                            <option value="declined" ${card.status === 'declined' ? 'selected' : ''}>Declined</option>
                                         </select>
                                     </td>
                                     <td class="price-cell">
@@ -683,15 +714,11 @@
                                                onchange="updateCardPrice('${escapeHtml(card.code)}', this.value, '${card.price ? card.price.currency : 'USD'}')">
                                     </td>
                                     <td class="action-cell">
-                                        <button class="btn" style="padding: 0.5rem; font-size: 0.8rem; background: #dc3545; color: white;" 
+                                        <button class="btn danger" style="padding: 0.5rem; font-size: 0.8rem;" 
                                                 onclick="deleteCard('${escapeHtml(card.code)}')">Delete</button>
                                     </td>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+                            ).join('')}                         </tbody>                     </table>                 </div>             ;
 
             cardsContainer.innerHTML = tableHTML;
         }
@@ -699,7 +726,7 @@
         // Update card status
         async function updateCardStatus(code, status) {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/cards/${code}/status`, {
+                const response = await fetch(${API_BASE}/api/admin/cards/${code}/status, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status }),
@@ -723,7 +750,7 @@
             if (isNaN(amount) || amount < 0) return;
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/cards/${code}/price`, {
+                const response = await fetch(${API_BASE}/api/admin/cards/${code}/price, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ amount, currency }),
@@ -743,10 +770,10 @@
 
         // Delete card
         async function deleteCard(code) {
-            if (!confirm(`Delete card ${code}?`)) return;
+            if (!confirm(Delete card ${code}?)) return;
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/cards/${code}`, {
+                const response = await fetch(${API_BASE}/api/admin/cards/${code}, {
                     method: 'DELETE',
                     credentials: 'include'
                 });
@@ -781,12 +808,12 @@
         }
 
         function getStatusIcon(status) {
-            const icons = { 'accepted': '✅', 'declined': '❌', 'pending': '⏳' };
+            const icons = { 'accepted': '✓', 'declined': '✗', 'pending': '⏳' };
             return icons[status] || '';
         }
 
         function formatDate(dateString) {
-            if (!dateString) return 'Never';
+            if (typeof dateString !== 'string' || !dateString) return 'Never';
             try {
                 const date = new Date(dateString);
                 if (isNaN(date.getTime())) return 'Invalid Date';
@@ -799,7 +826,7 @@
         function formatPrice(amount, currency) {
             if (amount === undefined || amount === null || isNaN(amount)) return 'Not set';
             const symbol = CURRENCY_SYMBOLS[currency] || currency;
-            return `${symbol}${parseFloat(amount).toFixed(2)}`;
+            return ${symbol}${parseFloat(amount).toFixed(2)};
         }
 
         function escapeHtml(text) {
@@ -813,28 +840,28 @@
         window.updateCardPrice = updateCardPrice;
         window.deleteCard = deleteCard;
 
-  // Initialize on page load
-document.addEventListener('DOMContentLoaded', async function() {
-  try {
-    const response = await fetch(`${API_BASE}/api/admin/status`, { credentials: 'include' });
-    const data = await response.json();
-    if (data.isAuthenticated) {
-      loginContainer.style.display = 'none';
-      adminPanel.style.display = 'block';
-      isAuthenticated = true;
-      loadCards();
-      loadCurrentPrice();
-    } else {
-      loginContainer.style.display = 'block';
-      adminPanel.style.display = 'none';
-    }
-  } catch (error) {
-    console.error('Auth check error:', error);
-    loginContainer.style.display = 'block';
-    adminPanel.style.display = 'none';
-    showLoginError('⚠️ Unable to verify session. Please log in.');
-  }
-});
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch(${API_BASE}/api/admin/status, { credentials: 'include' });
+                const data = await response.json();
+                if (data.isAuthenticated) {
+                    loginContainer.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    isAuthenticated = true;
+                    loadCards();
+                    loadCurrentPrice();
+                } else {
+                    loginContainer.style.display = 'block';
+                    adminPanel.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                loginContainer.style.display = 'block';
+                adminPanel.style.display = 'none';
+                showLoginError('Unable to verify session. Please log in.');
+            }
+        });
     </script>
 </body>
 </html>
