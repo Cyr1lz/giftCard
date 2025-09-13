@@ -813,21 +813,28 @@
         window.updateCardPrice = updateCardPrice;
         window.deleteCard = deleteCard;
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Optionally check auth status on load
-            fetch(`${API_BASE}/api/admin/status`, { credentials: 'include' })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.isAuthenticated) {
-                        loginContainer.style.display = 'none';
-                        adminPanel.style.display = 'block';
-                        loadCards();
-                        loadCurrentPrice();
-                    }
-                })
-                .catch(() => {}); // Ignore errors on initial load
-        });
+  // Initialize on page load
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/status`, { credentials: 'include' });
+    const data = await response.json();
+    if (data.isAuthenticated) {
+      loginContainer.style.display = 'none';
+      adminPanel.style.display = 'block';
+      isAuthenticated = true;
+      loadCards();
+      loadCurrentPrice();
+    } else {
+      loginContainer.style.display = 'block';
+      adminPanel.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Auth check error:', error);
+    loginContainer.style.display = 'block';
+    adminPanel.style.display = 'none';
+    showLoginError('⚠️ Unable to verify session. Please log in.');
+  }
+});
     </script>
 </body>
 </html>
