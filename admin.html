@@ -15,11 +15,11 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1rem;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -31,6 +31,7 @@
             max-width: 400px;
             margin: 0 auto;
             text-align: center;
+            margin-top: 10vh;
         }
 
         .admin-panel {
@@ -48,6 +49,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .admin-header h1 {
@@ -60,20 +63,7 @@
             align-items: center;
         }
 
-        .back-btn {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.2);
-            font-size: 0.9rem;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .logout-btn {
+        .logout-btn, .back-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -81,9 +71,13 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .logout-btn:hover {
+        .logout-btn:hover, .back-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -127,52 +121,38 @@
             transition: all 0.3s ease;
         }
 
-        .login-btn:hover, .btn:hover {
+        .login-btn:hover, .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .btn.danger {
-            background: #dc3545;
+        .login-btn:disabled, .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .btn.danger:hover {
-            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
-        }
-
-        .refresh-btn {
-            width: auto;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+        .cards-section {
+            padding: 2rem;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 2rem 0 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .section-header h3 {
-            color: #333;
-            font-size: 1.3rem;
+            margin: 0;
         }
 
-        .price-management {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-width: 300px;
-            margin-bottom: 2rem;
-        }
-
-        .current-price {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.1rem;
+        .refresh-btn {
+            width: auto;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
         }
 
         .stats-grid {
@@ -190,25 +170,65 @@
         }
 
         .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
         }
 
         .stat-label {
+            font-size: 0.85rem;
             color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .price-management {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .price-form {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .price-form .form-group {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .price-form .btn {
+            width: auto;
+            padding: 0.75rem 1.5rem;
             font-size: 0.9rem;
+        }
+
+        .current-price {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #667eea;
         }
 
         .table-container {
             overflow-x: auto;
             margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            -webkit-overflow-scrolling: touch;
         }
 
         .cards-table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
             background: white;
+            margin: 0;
         }
 
         .cards-table th,
@@ -219,51 +239,37 @@
         }
 
         .cards-table th {
-            background: #f8f9fa;
+            background-color: #f8f9fa;
             font-weight: 600;
             color: #333;
         }
 
-        .code-cell code {
-            word-break: break-all;
-            font-size: 0.9rem;
-            color: #333;
-            background: #f8f9fa;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+        .cards-table tr:hover {
+            background-color: #f8f9fa;
         }
 
-        .timestamp {
-            font-size: 0.85rem;
-            color: #666;
+        .cards-table tr:last-child td {
+            border-bottom: none;
         }
 
-        .price-input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #e1e5e9;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .status-select {
+        .status-select, .price-input {
             padding: 0.5rem;
             border: 2px solid #e1e5e9;
             border-radius: 6px;
             background-color: white;
             cursor: pointer;
-            font-size: 0.9rem;
             width: 100%;
+            font-size: 0.9rem;
         }
 
-        .status-select:focus {
+        .status-select:focus, .price-input:focus {
             outline: none;
             border-color: #667eea;
         }
 
         .status-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 500;
             display: inline-block;
@@ -284,13 +290,15 @@
             color: #856404;
         }
 
-        .admin-info {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            text-align: left;
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
         .error {
@@ -309,6 +317,15 @@
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
+        }
+
+        .admin-info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
         .back-link {
@@ -341,39 +358,93 @@
             to { transform: rotate(360deg); }
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-            width: 100%;
+        code {
+            background: #f1f3f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
         }
 
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .timestamp {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .price-cell {
+            min-width: 120px;
+        }
+
+        .status-cell {
+            min-width: 100px;
+        }
+
+        .code-cell {
+            min-width: 150px;
+        }
+
+        .date-cell {
+            min-width: 140px;
+        }
+
+        .action-cell {
+            min-width: 120px;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 1rem;
+                padding: 0.5rem;
+            }
+
+            .login-container {
+                margin-top: 5vh;
+            }
+
+            .cards-table {
+                font-size: 0.85rem;
+            }
+
+            .cards-table th,
+            .cards-table td {
+                padding: 0.75rem 0.5rem;
             }
 
             .admin-header {
                 flex-direction: column;
-                gap: 1rem;
                 text-align: center;
             }
 
             .section-header {
                 flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .price-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .price-form .form-group {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
 
             .cards-table th,
             .cards-table td {
-                padding: 0.5rem;
-                font-size: 0.9rem;
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .cards-table {
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -382,7 +453,7 @@
     <div class="container">
         <!-- Login Form -->
         <div id="loginContainer" class="login-container">
-            <h2>🔐 Admin Login</h2>
+            <h2>Admin Login</h2>
             <p style="margin-bottom: 2rem; color: #666;">Enter your credentials to access the admin panel</p>
 
             <div class="admin-info">
@@ -410,16 +481,16 @@
             <div id="loginError" class="error" style="display: none;"></div>
 
             <div class="back-link">
-                <a href="index.html">← Back to Gift Card Validator</a>
+                <a href="/">Back to Gift Card Validator</a>
             </div>
         </div>
 
         <!-- Admin Panel -->
         <div id="adminPanel" class="admin-panel">
             <div class="admin-header">
-                <h1>🎛️ Admin Dashboard</h1>
+                <h1>Admin Dashboard</h1>
                 <div class="header-actions">
-                    <a href="index.html" class="back-btn">🏠 Customer Panel</a>
+                    <a href="/" class="back-btn">Customer Panel</a>
                     <button class="logout-btn" id="logoutBtn">Logout</button>
                 </div>
             </div>
@@ -427,39 +498,41 @@
             <div class="cards-section">
                 <!-- Price Management Section -->
                 <div class="section-header">
-                    <h3>💰 Price Management</h3>
+                    <h3>Price Management</h3>
                 </div>
 
                 <div class="price-management">
-                    <div class="form-group">
-                        <label for="priceAmount">Price Amount</label>
-                        <input type="number" id="priceAmount" placeholder="25.00" step="0.01" min="0">
+                    <div class="price-form">
+                        <div class="form-group">
+                            <label for="priceAmount">Price Amount</label>
+                            <input type="number" id="priceAmount" placeholder="25.00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="priceCurrency">Currency</label>
+                            <select id="priceCurrency">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="CAD">CAD (C$)</option>
+                                <option value="AUD">AUD (A$)</option>
+                                <option value="JPY">JPY (¥)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn" id="updatePriceBtn">Update Price</button>
                     </div>
-                    <div class="form-group">
-                        <label for="priceCurrency">Currency</label>
-                        <select id="priceCurrency">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="CAD">CAD (C$)</option>
-                            <option value="AUD">AUD (A$)</option>
-                            <option value="JPY">JPY (¥)</option>
-                        </select>
+
+                    <div class="current-price" id="currentPriceDisplay">
+                        <strong>Current Gift Card Price:</strong> <span id="currentPriceValue">Not set</span>
                     </div>
-                    <button type="button" class="btn" id="updatePriceBtn">Update Price</button>
-                </div>
 
-                <div class="current-price" id="currentPriceDisplay">
-                    <strong>Current Gift Card Price:</strong> <span id="currentPriceValue">Not set</span>
+                    <div id="priceMessage" style="display: none; margin-top: 1rem;"></div>
                 </div>
-
-                <div id="priceMessage" style="display: none; margin-top: 1rem;"></div>
 
                 <!-- Gift Card Management Section -->
                 <div class="section-header">
-                    <h3>🎫 Gift Card Management</h3>
+                    <h3>Gift Card Management</h3>
                     <button class="btn refresh-btn" id="refreshBtn">
-                        🔄 Refresh
+                        Refresh
                     </button>
                 </div>
 
@@ -494,12 +567,6 @@
     </div>
 
     <script>
-        // API base URL (adjust if deployed)
-        const API_BASE = window.location.origin.includes('file://') ? 'http://localhost:3000' : '';
-
-        // Auth token simulation (server uses sessions, so no token needed)
-        let isAuthenticated = false;
-
         // Currency symbols mapping
         const CURRENCY_SYMBOLS = {
             'USD': '$',
@@ -509,6 +576,103 @@
             'AUD': 'A$',
             'JPY': '¥'
         };
+
+        // Session storage for admin login state
+        let isLoggedIn = false;
+        let adminCredentials = null;
+
+        // API helper functions
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Request failed');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Admin API functions
+        async function adminLogin(username, password) {
+            const response = await apiRequest('/api/admin/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            return response;
+        }
+
+        async function getCurrentPrice() {
+            const response = await apiRequest('/api/price');
+            return response.price;
+        }
+
+        async function updatePrice(amount, currency, credentials) {
+            const response = await apiRequest('/api/admin/price', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    username: credentials.username, 
+                    password: credentials.password, 
+                    amount, 
+                    currency 
+                })
+            });
+            return response;
+        }
+
+        async function getCards(credentials) {
+            const response = await apiRequest('/api/admin/cards', {
+                method: 'POST',
+                body: JSON.stringify(credentials)
+            });
+            return response.cards;
+        }
+
+        async function getStats(credentials) {
+            const response = await apiRequest('/api/admin/stats', {
+                method: 'POST',
+                body: JSON.stringify(credentials)
+            });
+            return response.stats;
+        }
+
+        async function updateCardStatus(code, status, credentials) {
+            const response = await apiRequest('/api/admin/cards/status', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    username: credentials.username, 
+                    password: credentials.password, 
+                    code, 
+                    status 
+                })
+            });
+            return response;
+        }
+
+        async function updateCardPrice(code, amount, credentials) {
+            const response = await apiRequest('/api/admin/cards/price', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    username: credentials.username, 
+                    password: credentials.password, 
+                    code, 
+                    amount 
+                })
+            });
+            return response;
+        }
 
         // DOM elements
         const loginContainer = document.getElementById('loginContainer');
@@ -538,27 +702,20 @@
             loginBtn.innerHTML = '<span class="loading"></span> Logging in...';
 
             try {
-                const response = await fetch(${API_BASE}/api/admin/login, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password }),
-                    credentials: 'include' // Include session cookies
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    isAuthenticated = true;
-                    loginContainer.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                    loginError.style.display = 'none';
-                    loadCards();
-                    loadCurrentPrice();
-                } else {
-                    showLoginError('Invalid username or password');
-                }
+                await adminLogin(username, password);
+                
+                // Store credentials for subsequent requests
+                adminCredentials = { username, password };
+                isLoggedIn = true;
+                
+                loginContainer.style.display = 'none';
+                adminPanel.style.display = 'block';
+                loginError.style.display = 'none';
+                
+                await loadDashboard();
+                
             } catch (error) {
-                console.error('Login error:', error);
-                showLoginError('Network error. Please check if the server is running.');
+                showLoginError('Invalid username or password');
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = 'Login';
@@ -566,13 +723,9 @@
         });
 
         // Logout
-        logoutBtn.addEventListener('click', async function() {
-            try {
-                await fetch(${API_BASE}/api/admin/logout, { method: 'POST', credentials: 'include' });
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-            isAuthenticated = false;
+        logoutBtn.addEventListener('click', function() {
+            isLoggedIn = false;
+            adminCredentials = null;
             adminPanel.style.display = 'none';
             loginContainer.style.display = 'block';
             loginForm.reset();
@@ -580,83 +733,73 @@
         });
 
         // Refresh cards
-        refreshBtn.addEventListener('click', loadCards);
+        refreshBtn.addEventListener('click', () => loadCards());
 
         // Update price
         updatePriceBtn.addEventListener('click', async function() {
-            const amountStr = document.getElementById('priceAmount').value.trim();
-            const amount = parseFloat(amountStr);
+            const amount = parseFloat(document.getElementById('priceAmount').value);
             const currency = document.getElementById('priceCurrency').value;
 
-            if (!amountStr || isNaN(amount) || amount < 0) {
+            if (isNaN(amount) || amount < 0) {
                 showPriceMessage('Please enter a valid price amount', 'error');
                 return;
             }
 
             try {
-                const response = await fetch(${API_BASE}/api/admin/price, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount, currency }),
-                    credentials: 'include'
-                });
-                const data = await response.json();
+                await updatePrice(amount, currency, adminCredentials);
+                await loadCurrentPrice();
+                showPriceMessage('Price updated successfully!', 'success');
 
-                if (response.ok) {
-                    loadCurrentPrice();
-                    showPriceMessage('Price updated successfully!', 'success');
-                    document.getElementById('priceAmount').value = '';
-                    document.getElementById('priceCurrency').value = 'USD';
-                } else {
-                    showPriceMessage(${data.error}, 'error');
-                }
+                // Clear the form
+                document.getElementById('priceAmount').value = '';
+                document.getElementById('priceCurrency').value = 'USD';
             } catch (error) {
-                console.error('Update price error:', error);
-                showPriceMessage('Network error. Please try again.', 'error');
+                showPriceMessage('Failed to update price: ' + error.message, 'error');
             }
         });
 
+        // Load dashboard data
+        async function loadDashboard() {
+            await Promise.all([
+                loadCurrentPrice(),
+                loadCards()
+            ]);
+        }
+
         // Load current price
         async function loadCurrentPrice() {
-            const currentPriceValue = document.getElementById('currentPriceValue');
-            if (!currentPriceValue) return;
             try {
-                const response = await fetch(${API_BASE}/api/admin/price, { credentials: 'include' });
-                const priceData = await response.json();
+                const priceData = await getCurrentPrice();
+                const currentPriceValue = document.getElementById('currentPriceValue');
                 
-                if (priceData.amount !== null) {
+                if (priceData && priceData.amount !== undefined) {
                     const symbol = CURRENCY_SYMBOLS[priceData.currency] || priceData.currency;
-                    currentPriceValue.textContent = ${symbol}${priceData.amount.toFixed(2)} ${priceData.currency};
+                    currentPriceValue.textContent = `${symbol}${priceData.amount.toFixed(2)} ${priceData.currency}`;
                 } else {
                     currentPriceValue.textContent = 'Not set';
                 }
             } catch (error) {
-                console.error('Error loading price:', error);
-                currentPriceValue.textContent = 'Error loading';
+                console.error('Error loading current price:', error);
+                document.getElementById('currentPriceValue').textContent = 'Error loading price';
             }
         }
 
-        // Load cards from server
+        // Load cards from API
         async function loadCards() {
-            if (!isAuthenticated) return;
+            if (!isLoggedIn || !adminCredentials) return;
 
             const originalText = refreshBtn.innerHTML;
             refreshBtn.innerHTML = '<span class="loading"></span> Loading...';
             refreshBtn.disabled = true;
 
             try {
-                const response = await fetch(${API_BASE}/api/admin/cards, { credentials: 'include' });
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateStats(data.stats);
-                    displayCards(data.cards);
-                } else if (response.status === 401) {
-                    showLoginError('Session expired. Please login again.');
-                    logoutBtn.click();
-                } else {
-                    throw new Error(data.error || 'Failed to load cards');
-                }
+                const [cards, stats] = await Promise.all([
+                    getCards(adminCredentials),
+                    getStats(adminCredentials)
+                ]);
+                
+                updateStats(stats);
+                displayCards(cards);
             } catch (error) {
                 console.error('Error loading cards:', error);
                 showError('Error loading cards. Please try again.');
@@ -677,14 +820,35 @@
         // Display cards in table
         function displayCards(cards) {
             if (cards.length === 0) {
-                cardsContainer.innerHTML =                     <div class="empty-state">                         <div class="empty-state-icon">📦</div>                         <p>No gift cards submitted yet</p>                         <small>Cards will appear here when customers validate them</small>                     </div>                ;
+                cardsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No gift cards submitted yet</p>
+                        <small>Cards will appear here when customers validate them</small>
+                    </div>
+                `;
                 return;
             }
 
             // Sort cards by creation date (newest first)
-            cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            cards.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
-            const tableHTML =                 <div class="table-container">                     <table class="cards-table">                         <thead>                             <tr>                                 <th class="code-cell">Gift Card Code</th>                                 <th class="status-cell">Current Status</th>                                 <th class="price-cell">Price</th>                                 <th class="date-cell">Created</th>                                 <th class="date-cell">Last Updated</th>                                 <th class="action-cell">Change Status</th>                                 <th class="price-cell">Set Price</th>                                 <th class="action-cell">Delete</th>                             </tr>                         </thead>                         <tbody>                             ${cards.map(card =>
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="cards-table">
+                        <thead>
+                            <tr>
+                                <th class="code-cell">Gift Card Code</th>
+                                <th class="status-cell">Current Status</th>
+                                <th class="price-cell">Price</th>
+                                <th class="date-cell">Created</th>
+                                <th class="date-cell">Last Updated</th>
+                                <th class="action-cell">Change Status</th>
+                                <th class="price-cell">Set Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cards.map(card => `
                                 <tr>
                                     <td class="code-cell"><code>${escapeHtml(card.code)}</code></td>
                                     <td class="status-cell">
@@ -693,7 +857,7 @@
                                         </span>
                                     </td>
                                     <td class="price-cell">
-                                        ${card.price && card.price.amount !== null ? formatPrice(card.price.amount, card.price.currency) : 'Global / Not set'}
+                                        ${card.price ? formatPrice(card.price.amount, card.price.currency) : 'Not set'}
                                     </td>
                                     <td class="date-cell">
                                         <div class="timestamp">${formatDate(card.createdAt)}</div>
@@ -702,7 +866,7 @@
                                         <div class="timestamp">${card.updatedAt ? formatDate(card.updatedAt) : 'Never'}</div>
                                     </td>
                                     <td class="action-cell">
-                                        <select class="status-select" onchange="updateCardStatus('${escapeHtml(card.code)}', this.value)">
+                                        <select class="status-select" onchange="handleStatusChange('${escapeHtml(card.code)}', this.value)">
                                             <option value="pending" ${card.status === 'pending' ? 'selected' : ''}>Pending</option>
                                             <option value="accepted" ${card.status === 'accepted' ? 'selected' : ''}>Accepted</option>
                                             <option value="declined" ${card.status === 'declined' ? 'selected' : ''}>Declined</option>
@@ -710,82 +874,47 @@
                                     </td>
                                     <td class="price-cell">
                                         <input type="number" class="price-input" placeholder="25.00" step="0.01" min="0" 
-                                               value="${card.price && card.price.amount !== null ? card.price.amount : ''}"
-                                               onchange="updateCardPrice('${escapeHtml(card.code)}', this.value, '${card.price ? card.price.currency : 'USD'}')">
-                                    </td>
-                                    <td class="action-cell">
-                                        <button class="btn danger" style="padding: 0.5rem; font-size: 0.8rem;" 
-                                                onclick="deleteCard('${escapeHtml(card.code)}')">Delete</button>
+                                               value="${card.price ? card.price.amount : ''}"
+                                               onchange="handlePriceChange('${escapeHtml(card.code)}', this.value)">
                                     </td>
                                 </tr>
-                            ).join('')}                         </tbody>                     </table>                 </div>             ;
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
 
             cardsContainer.innerHTML = tableHTML;
         }
 
-        // Update card status
-        async function updateCardStatus(code, status) {
+        // Handle status change
+        async function handleStatusChange(code, status) {
             try {
-                const response = await fetch(${API_BASE}/api/admin/cards/${code}/status, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status }),
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    loadCards(); // Refresh
-                } else {
-                    throw new Error('Failed to update status');
-                }
+                await updateCardStatus(code, status, adminCredentials);
+                await loadCards(); // Refresh the table and stats
             } catch (error) {
                 console.error('Error updating card status:', error);
                 showError('Error updating card status. Please try again.');
+                // Refresh to revert the dropdown
+                await loadCards();
             }
         }
 
-        // Update card price
-        async function updateCardPrice(code, amountStr, currency) {
-            const amount = parseFloat(amountStr);
-            if (isNaN(amount) || amount < 0) return;
-
+        // Handle price change
+        async function handlePriceChange(code, amount) {
             try {
-                const response = await fetch(${API_BASE}/api/admin/cards/${code}/price, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount, currency }),
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    loadCards(); // Refresh
-                } else {
-                    throw new Error('Failed to update price');
+                const priceAmount = parseFloat(amount);
+                if (isNaN(priceAmount) || priceAmount < 0) {
+                    return;
                 }
+                
+                await updateCardPrice(code, priceAmount, adminCredentials);
+                await loadCards(); // Refresh the table
             } catch (error) {
                 console.error('Error updating card price:', error);
                 showError('Error updating card price. Please try again.');
-            }
-        }
-
-        // Delete card
-        async function deleteCard(code) {
-            if (!confirm(Delete card ${code}?)) return;
-
-            try {
-                const response = await fetch(${API_BASE}/api/admin/cards/${code}, {
-                    method: 'DELETE',
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    loadCards(); // Refresh
-                } else {
-                    throw new Error('Failed to delete card');
-                }
-            } catch (error) {
-                console.error('Error deleting card:', error);
-                showError('Error deleting card. Please try again.');
+                // Refresh to revert the input
+                await loadCards();
             }
         }
 
@@ -799,21 +928,27 @@
             priceMessage.textContent = message;
             priceMessage.className = type;
             priceMessage.style.display = 'block';
-            setTimeout(() => priceMessage.style.display = 'none', 3000);
+            
+            setTimeout(() => {
+                priceMessage.style.display = 'none';
+            }, 3000);
         }
 
         function showError(message) {
             console.error(message);
-            // Could add a UI toast here
         }
 
         function getStatusIcon(status) {
-            const icons = { 'accepted': '✓', 'declined': '✗', 'pending': '⏳' };
+            const icons = {
+                'accepted': '✅',
+                'declined': '❌',
+                'pending': '⏳'
+            };
             return icons[status] || '';
         }
 
         function formatDate(dateString) {
-            if (typeof dateString !== 'string' || !dateString) return 'Never';
+            if (!dateString) return 'Never';
             try {
                 const date = new Date(dateString);
                 if (isNaN(date.getTime())) return 'Invalid Date';
@@ -826,7 +961,7 @@
         function formatPrice(amount, currency) {
             if (amount === undefined || amount === null || isNaN(amount)) return 'Not set';
             const symbol = CURRENCY_SYMBOLS[currency] || currency;
-            return ${symbol}${parseFloat(amount).toFixed(2)};
+            return `${symbol}${parseFloat(amount).toFixed(2)}`;
         }
 
         function escapeHtml(text) {
@@ -836,31 +971,13 @@
         }
 
         // Make functions globally available for inline event handlers
-        window.updateCardStatus = updateCardStatus;
-        window.updateCardPrice = updateCardPrice;
-        window.deleteCard = deleteCard;
+        window.handleStatusChange = handleStatusChange;
+        window.handlePriceChange = handlePriceChange;
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const response = await fetch(${API_BASE}/api/admin/status, { credentials: 'include' });
-                const data = await response.json();
-                if (data.isAuthenticated) {
-                    loginContainer.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                    isAuthenticated = true;
-                    loadCards();
-                    loadCurrentPrice();
-                } else {
-                    loginContainer.style.display = 'block';
-                    adminPanel.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Auth check error:', error);
-                loginContainer.style.display = 'block';
-                adminPanel.style.display = 'none';
-                showLoginError('Unable to verify session. Please log in.');
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-load price without authentication
+            loadCurrentPrice();
         });
     </script>
 </body>
