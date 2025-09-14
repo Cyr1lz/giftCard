@@ -1,340 +1,341 @@
-// server.js
 const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const path = require('path');
-const session = require('express-session');
+const fs = require('fs').promises;
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.json());
-app.use(express.static(__dirname)); // Serve static files (HTML, CSS, JS)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'gift-card-validator-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname)));
 
-// In-memory database
+// In-memory storage (replace with database in production)
 let giftCards = {};
-let globalPrice = null; // Global price configuration
+let currentPrice = null;
 
-// Admin credentials
-const ADMIN_CREDENTIALS = {
-  username: process.env.ADMIN_USERNAME || 'admin',
-  password: process.env.ADMIN_PASSWORD || 'admin123'
-};
+// Admin credentials (use environment variables in production)
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
-// Supported currencies
-const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'];
+// Data file paths for persistence
+const CARDS_FILE = path.join(__dirname, 'data', 'cards.json');
+const PRICE_FILE = path.join(__dirname, 'data', 'price.json');
 
-// Utility functions
-function validateGiftCardCode(code) {
-  return code && 
-         typeof code === 'string' && 
-         code.length <= 25 && 
-         code.length >= 1 && 
-         /^[A-Z0-9]+$/.test(code);
+// Ensure data directory exists
+async function ensureDataDirectory() {
+    try {
+        await fs.mkdir(path.join(__dirname, 'data'), { recursive: true });
+    } catch (error) {
+        console.error('Error creating data directory:', error);
+    }
 }
 
-function validatePrice(amount, currency) {
-  return typeof amount === 'number' && 
-         amount >= 0 && 
-         SUPPORTED_CURRENCIES.includes(currency);
+// Load data from files on startup
+async function loadData() {
+    try {
+        // Load gift cards
+        try {
+            const cardsData = await fs.readFile(CARDS_FILE, 'utf8');
+            giftCards = JSON.parse(cardsData);
+            console.log(`Loaded ${Object.keys(giftCards).length} gift cards`);
+        } catch (error) {
+            if (error.code !== 'ENOENT') {
+                console.error('Error loading gift cards:', error);
+            }
+            giftCards = {};
+        }
+
+        // Load price data
+        try {
+            const priceData = await fs.readFile(PRICE_FILE, 'utf8');
+            currentPrice = JSON.parse(priceData);
+            console.log('Loaded current price:', currentPrice);
+        } catch (error) {
+            if (error.code !== 'ENOENT') {
+                console.error('Error loading price data:', error);
+            }
+            currentPrice = null;
+        }
+    } catch (error) {
+        console.error('Error in loadData:', error);
+    }
 }
 
-// Static file routes
+// Save data to files
+async function saveData() {
+    try {
+        await fs.writeFile(CARDS_FILE, JSON.stringify(giftCards, null, 2));
+        await fs.writeFile(PRICE_FILE, JSON.stringify(currentPrice, null, 2));
+    } catch (error) {
+        console.error('Error saving data:', error);
+    }
+}
+
+// Authentication middleware
+function authenticate(req, res, next) {
+    const { username, password } = req.body;
+    
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        next();
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+}
+
+// API Routes
+
+// Admin login
+app.post('/api/admin/login', authenticate, (req, res) => {
+    res.json({ success: true, message: 'Login successful' });
+});
+
+// Get current price
+app.get('/api/price', (req, res) => {
+    res.json({ 
+        success: true, 
+        price: currentPrice 
+    });
+});
+
+// Update price (admin only)
+app.post('/api/admin/price', authenticate, async (req, res) => {
+    try {
+        const { amount, currency } = req.body;
+        
+        if (typeof amount !== 'number' || amount < 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid price amount' 
+            });
+        }
+        
+        if (!currency || typeof currency !== 'string') {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid currency' 
+            });
+        }
+        
+        currentPrice = {
+            amount: amount,
+            currency: currency,
+            updatedAt: new Date().toISOString()
+        };
+        
+        await saveData();
+        
+        res.json({ 
+            success: true, 
+            message: 'Price updated successfully',
+            price: currentPrice
+        });
+    } catch (error) {
+        console.error('Error updating price:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal server error' 
+        });
+    }
+});
+
+// Validate gift card
+app.post('/api/validate', async (req, res) => {
+    try {
+        const { code } = req.body;
+        
+        if (!code || typeof code !== 'string' || code.length > 25 || !/^[A-Z0-9]{1,25}$/.test(code)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid gift card format' 
+            });
+        }
+        
+        // If card doesn't exist, create it with pending status
+        if (!giftCards[code]) {
+            giftCards[code] = {
+                code: code,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            await saveData();
+        }
+        
+        const card = giftCards[code];
+        
+        res.json({ 
+            success: true, 
+            card: card,
+            globalPrice: currentPrice
+        });
+    } catch (error) {
+        console.error('Error validating card:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal server error' 
+        });
+    }
+});
+
+// Get all cards (admin only)
+app.post('/api/admin/cards', authenticate, (req, res) => {
+    const cards = Object.values(giftCards);
+    res.json({ 
+        success: true, 
+        cards: cards 
+    });
+});
+
+// Update card status (admin only)
+app.post('/api/admin/cards/status', authenticate, async (req, res) => {
+    try {
+        const { code, status } = req.body;
+        
+        if (!code || !giftCards[code]) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Gift card not found' 
+            });
+        }
+        
+        if (!['pending', 'accepted', 'declined'].includes(status)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid status' 
+            });
+        }
+        
+        giftCards[code].status = status;
+        giftCards[code].updatedAt = new Date().toISOString();
+        
+        await saveData();
+        
+        res.json({ 
+            success: true, 
+            message: 'Status updated successfully',
+            card: giftCards[code]
+        });
+    } catch (error) {
+        console.error('Error updating card status:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal server error' 
+        });
+    }
+});
+
+// Update card price (admin only)
+app.post('/api/admin/cards/price', authenticate, async (req, res) => {
+    try {
+        const { code, amount } = req.body;
+        
+        if (!code || !giftCards[code]) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Gift card not found' 
+            });
+        }
+        
+        if (typeof amount !== 'number' || amount < 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid price amount' 
+            });
+        }
+        
+        // Use global price currency or default to USD
+        const currency = currentPrice ? currentPrice.currency : 'USD';
+        
+        giftCards[code].price = {
+            amount: amount,
+            currency: currency
+        };
+        giftCards[code].updatedAt = new Date().toISOString();
+        
+        await saveData();
+        
+        res.json({ 
+            success: true, 
+            message: 'Price updated successfully',
+            card: giftCards[code]
+        });
+    } catch (error) {
+        console.error('Error updating card price:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal server error' 
+        });
+    }
+});
+
+// Get statistics (admin only)
+app.post('/api/admin/stats', authenticate, (req, res) => {
+    const cards = Object.values(giftCards);
+    const stats = {
+        total: cards.length,
+        accepted: cards.filter(card => card.status === 'accepted').length,
+        declined: cards.filter(card => card.status === 'declined').length,
+        pending: cards.filter(card => card.status === 'pending').length
+    };
+    
+    res.json({ 
+        success: true, 
+        stats: stats 
+    });
+});
+
+// Serve HTML files
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-// Customer API - Get current global price
-app.get('/api/price', (req, res) => {
-  res.json(globalPrice || { amount: null, currency: 'USD', updatedAt: null });
-});
-
-// Customer API - Validate gift card
-app.post('/api/validate', (req, res) => {
-  try {
-    const { code } = req.body;
-
-    if (!code || typeof code !== 'string') {
-      return res.status(400).json({ error: 'Gift card code is required' });
-    }
-
-    const upperCode = code.toUpperCase().trim();
-
-    if (!validateGiftCardCode(upperCode)) {
-      return res.status(400).json({ 
-        error: 'Invalid gift card format. Use up to 25 characters (letters and numbers only)' 
-      });
-    }
-
-    // Create card if doesn't exist
-    if (!giftCards[upperCode]) {
-      giftCards[upperCode] = {
-        code: upperCode,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        price: null // Individual card price (optional)
-      };
-    }
-
-    const card = giftCards[upperCode];
-    
-    // Return card status with pricing info
-    res.json({ 
-      status: card.status,
-      price: card.price || globalPrice, // Individual price or global price
-      code: card.code,
-      createdAt: card.createdAt,
-      updatedAt: card.updatedAt || null
-    });
-
-  } catch (error) {
-    console.error('Validation error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Admin authentication middleware
-function requireAdmin(req, res, next) {
-  if (!req.session.isAdmin) {
-    return res.status(401).json({ error: 'Unauthorized. Please log in as admin.' });
-  }
-  next();
-}
-
-// Admin API - Login
-app.post('/api/admin/login', (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
-    }
-
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-      req.session.isAdmin = true;
-      res.json({ success: true, message: 'Login successful' });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
-
-// Admin API - Check authentication status
-app.get('/api/admin/status', (req, res) => {
-  res.json({ isAuthenticated: !!req.session.isAdmin });
-});
-
-// Admin API - Get all cards with statistics
-app.get('/api/admin/cards', requireAdmin, (req, res) => {
-  try {
-    const cards = Object.values(giftCards);
-    const stats = {
-      total: cards.length,
-      accepted: cards.filter(card => card.status === 'accepted').length,
-      declined: cards.filter(card => card.status === 'declined').length,
-      pending: cards.filter(card => card.status === 'pending').length
-    };
-
-    res.json({ 
-      cards: cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
-      stats,
-      globalPrice
-    });
-
-  } catch (error) {
-    console.error('Get cards error:', error);
-    res.status(500).json({ error: 'Failed to retrieve cards' });
-  }
-});
-
-// Admin API - Update card status
-app.put('/api/admin/cards/:code/status', requireAdmin, (req, res) => {
-  try {
-    const { code } = req.params;
-    const { status } = req.body;
-    const upperCode = code.toUpperCase();
-
-    if (!['accepted', 'declined', 'pending'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status. Use: accepted, declined, or pending' });
-    }
-
-    if (!giftCards[upperCode]) {
-      return res.status(404).json({ error: 'Gift card not found' });
-    }
-
-    giftCards[upperCode].status = status;
-    giftCards[upperCode].updatedAt = new Date().toISOString();
-    
-    res.json({ 
-      success: true, 
-      message: `Card ${upperCode} status updated to ${status}`,
-      card: giftCards[upperCode]
-    });
-
-  } catch (error) {
-    console.error('Update card status error:', error);
-    res.status(500).json({ error: 'Failed to update card status' });
-  }
-});
-
-// Admin API - Update individual card price
-app.put('/api/admin/cards/:code/price', requireAdmin, (req, res) => {
-  try {
-    const { code } = req.params;
-    const { amount, currency } = req.body;
-    const upperCode = code.toUpperCase();
-
-    if (!giftCards[upperCode]) {
-      return res.status(404).json({ error: 'Gift card not found' });
-    }
-
-    // Validate price data
-    if (amount !== null && amount !== undefined) {
-      if (!validatePrice(amount, currency || 'USD')) {
-        return res.status(400).json({ 
-          error: 'Invalid price. Amount must be a positive number and currency must be supported.' 
-        });
-      }
-
-      giftCards[upperCode].price = {
-        amount: parseFloat(amount),
-        currency: currency || (globalPrice ? globalPrice.currency : 'USD')
-      };
-    } else {
-      // Remove individual pricing (will use global price)
-      giftCards[upperCode].price = null;
-    }
-
-    giftCards[upperCode].updatedAt = new Date().toISOString();
-    
-    res.json({ 
-      success: true, 
-      message: `Card ${upperCode} price updated`,
-      card: giftCards[upperCode]
-    });
-
-  } catch (error) {
-    console.error('Update card price error:', error);
-    res.status(500).json({ error: 'Failed to update card price' });
-  }
-});
-
-// Admin API - Get global price
-app.get('/api/admin/price', requireAdmin, (req, res) => {
-  res.json(globalPrice || { amount: null, currency: 'USD', updatedAt: null });
-});
-
-// Admin API - Update global price
-app.put('/api/admin/price', requireAdmin, (req, res) => {
-  try {
-    const { amount, currency } = req.body;
-
-    if (!validatePrice(amount, currency)) {
-      return res.status(400).json({ 
-        error: `Invalid price data. Amount must be a positive number and currency must be one of: ${SUPPORTED_CURRENCIES.join(', ')}` 
-      });
-    }
-
-    globalPrice = {
-      amount: parseFloat(amount),
-      currency: currency,
-      updatedAt: new Date().toISOString()
-    };
-
-    res.json({ 
-      success: true, 
-      message: 'Global price updated successfully',
-      price: globalPrice
-    });
-
-  } catch (error) {
-    console.error('Update global price error:', error);
-    res.status(500).json({ error: 'Failed to update global price' });
-  }
-});
-
-// Admin API - Delete card
-app.delete('/api/admin/cards/:code', requireAdmin, (req, res) => {
-  try {
-    const { code } = req.params;
-    const upperCode = code.toUpperCase();
-
-    if (!giftCards[upperCode]) {
-      return res.status(404).json({ error: 'Gift card not found' });
-    }
-
-    delete giftCards[upperCode];
-    
-    res.json({ 
-      success: true, 
-      message: `Card ${upperCode} deleted successfully`
-    });
-
-  } catch (error) {
-    console.error('Delete card error:', error);
-    res.status(500).json({ error: 'Failed to delete card' });
-  }
-});
-
-// Admin API - Logout
-app.post('/api/admin/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Logout error:', err);
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    res.json({ success: true, message: 'Logout successful' });
-  });
-});
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    cardsCount: Object.keys(giftCards).length,
-    globalPriceSet: !!globalPrice
-  });
+    res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
+    console.error(err.stack);
+    res.status(500).json({ 
+        success: false, 
+        message: 'Something went wrong!' 
+    });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found' });
+    res.status(404).json({ 
+        success: false, 
+        message: 'Endpoint not found' 
+    });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Gift Card Validator running on port ${PORT}`);
-  console.log(`📊 Customer panel: http://localhost:${PORT}/`);
-  console.log(`🔧 Admin panel: http://localhost:${PORT}/admin`);
-  console.log(`💰 Price management enabled`);
-  
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`🔑 Admin credentials: ${ADMIN_CREDENTIALS.username} / ${ADMIN_CREDENTIALS.password}`);
-  }
+// Initialize and start server
+async function startServer() {
+    await ensureDataDirectory();
+    await loadData();
+    
+    app.listen(PORT, () => {
+        console.log(`Gift Card Validator server running on port ${PORT}`);
+        console.log(`Customer interface: http://localhost:${PORT}`);
+        console.log(`Admin interface: http://localhost:${PORT}/admin`);
+        console.log(`Admin credentials: ${ADMIN_USERNAME} / ${ADMIN_PASSWORD}`);
+    });
+}
+
+// Save data on process exit
+process.on('SIGINT', async () => {
+    console.log('\nSaving data before exit...');
+    await saveData();
+    process.exit(0);
 });
 
-module.exports = app;
+process.on('SIGTERM', async () => {
+    console.log('Saving data before exit...');
+    await saveData();
+    process.exit(0);
+});
+
+startServer().catch(console.error);
